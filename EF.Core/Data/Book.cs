@@ -1,11 +1,9 @@
 ﻿
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace EF.Core.Data
 {
-    public class Book:BaseEntity
+    public class Book : BaseEntity
     {
         public string Title { get; set; }
 

@@ -17,6 +17,11 @@
     <ProjectReference Include="..\EF.Data\EF.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\lib\bootstrap-fileinput\" />
+    <Folder Include="wwwroot\upload\" />
+  </ItemGroup>
+
 
 
 </Project>

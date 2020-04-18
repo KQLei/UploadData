@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using EF.Core;
 
 namespace EF.Data
 {
@@ -9,5 +7,7 @@ namespace EF.Data
         void Commit();
 
         void RollBack();
+
+        Repository<T> Repository<T>() where T : BaseEntity;
     }
 }

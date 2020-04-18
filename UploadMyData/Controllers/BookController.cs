@@ -1,11 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using EF.Core.Data;
 using EF.Data;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Logging;
+using System;
+using System.IO;
+using System.Linq;
+using UploadMyData.Models;
 
 namespace UploadMyData.Controllers
 {
@@ -13,92 +16,161 @@ namespace UploadMyData.Controllers
     {
         private readonly ILogger<BookController> _logger;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public BookController(ILogger<BookController> logger, IUnitOfWork unitOfWork)
+        public BookController(ILogger<BookController> logger, IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
+            _webHostEnvironment = webHostEnvironment;
         }
 
-
-        // GET: Book
         public ActionResult Index()
         {
             return View();
         }
 
-        // GET: Book/Details/5
-        public ActionResult Details(int id)
+        public ActionResult BookLists()
         {
-            return View();
+            var bookRep = _unitOfWork.Repository<Book>();
+            var bookList = bookRep.Table.Select(p => new BookDTO()
+            {
+                ID = p.ID,
+                Auther = p.Auther,
+                CreateTime = p.CreateTime,
+                ModifiedTime = p.ModifiedTime,
+                Title = p.Title,
+                URL = p.URL
+            });
+            return Json(bookList);
         }
 
-        // GET: Book/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Book/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(BookDTO bookDTO)
         {
             try
             {
-                // TODO: Add insert logic here
+                var bookRep = _unitOfWork.Repository<Book>();
 
-                return RedirectToAction(nameof(Index));
+                bookRep.Insert(new Book
+                {
+                    Auther = bookDTO.Auther,
+                    Title = bookDTO.Title,
+                });
+                _unitOfWork.Commit();
+                return Json(new ResultModel
+                {
+                    IsSuccess = true,
+                    Message = "添加成功"
+                });
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return Json(new ResultModel
+                {
+                    IsSuccess = false,
+                    Message = $"添加失败，原因为：{ex.Message}"
+                });
             }
         }
 
-        // GET: Book/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: Book/Edit/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Delete(long bookId)
         {
             try
             {
-                // TODO: Add update logic here
-
-                return RedirectToAction(nameof(Index));
+                var bookRep = _unitOfWork.Repository<Book>();
+                bookRep.Delete(bookRep.GetById(bookId));
+                _unitOfWork.Commit();
+                return Json(new ResultModel
+                {
+                    IsSuccess = true,
+                    Message = "删除成功"
+                });
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return Json(new ResultModel
+                {
+                    IsSuccess = false,
+                    Message = $"删除失败，原因为：{ex.Message}"
+                });
             }
         }
 
-        // GET: Book/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: Book/Delete/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Upload(long bookId)
         {
-            try
-            {
-                // TODO: Add delete logic here
 
-                return RedirectToAction(nameof(Index));
-            }
-            catch
+            if (Request.Form.Files.Count <= 0)
             {
-                return View();
+                return Json(new ResultModel
+                {
+                    IsSuccess = false,
+                    Message = "请选择要上传的书籍"
+                });
+            }
+
+            HandleUploadFiles(Request.Form.Files, bookId);
+
+            return Json(new ResultModel
+            {
+                IsSuccess = true,
+                Message = "上传成功"
+            });
+        }
+
+        public ActionResult Download(long bookId)
+        {
+            var bookRep = _unitOfWork.Repository<Book>();
+            var bookObj = bookRep.GetById(bookId);
+
+            if (string.IsNullOrWhiteSpace(bookObj.URL))
+            {
+                return RedirectToAction("Index");
+            }
+
+            var fileName = Path.GetFileName(bookObj.URL);
+            //获取文件的ContentType
+            var provider = new FileExtensionContentTypeProvider();
+            var memi = provider.Mappings[Path.GetExtension(bookObj.URL)];
+
+            return File(new FileStream(bookObj.URL, FileMode.Open, FileAccess.Read), memi, fileName);
+        }
+
+        private void HandleUploadFiles(IFormFileCollection files, long bookId)
+        {
+            string webRootPath = _webHostEnvironment.WebRootPath;
+            //数据总长度
+            long size = files.Sum(f => f.Length);
+            foreach (var file in files)
+            {
+                if (file.Length > 0)
+                {
+                    //大小 字节
+                    long fileSize = file.Length;
+
+                    //文件地址
+                    string filePath = Path.Combine(webRootPath, "upload");
+
+                    //文件名
+                    string fileName = Path.GetFileName(file.FileName);
+
+                    if (!Directory.Exists(filePath))
+                    {
+                        Directory.CreateDirectory(filePath);
+                    }
+                    string path = Path.Combine(filePath, fileName);
+
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    {
+                        file.CopyTo(stream);
+                        var bookRep = _unitOfWork.Repository<Book>();
+                        var bookObj = bookRep.GetById(bookId);
+                        bookObj.URL = path;
+                        _unitOfWork.Commit();
+                    }
+                }
             }
         }
     }

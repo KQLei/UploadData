@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using EF.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,9 +22,7 @@ namespace UploadMyData
         {
             services.AddControllersWithViews();
 
-            
-
-            services.AddDbContext<EFDbContext>(option=>option.UseSqlServer(Configuration.GetConnectionString("BookContext")),ServiceLifetime.Scoped);
+            services.AddDbContext<EFDbContext>(option => option.UseSqlServer(Configuration.GetConnectionString("BookContext")), ServiceLifetime.Scoped);
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
         }

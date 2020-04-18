@@ -1,11 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace EF.Core
 {
     public class BaseEntity
     {
+        public BaseEntity()
+        {
+            CreateTime = DateTime.Now;
+        }
+
         public long ID { get; set; }
 
         public DateTime CreateTime { get; set; }

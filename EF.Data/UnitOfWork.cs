@@ -1,8 +1,6 @@
 ﻿using EF.Core;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Text;
 
 namespace EF.Data
 {
@@ -27,7 +25,7 @@ namespace EF.Data
 
         public Repository<T> Repository<T>() where T : BaseEntity
         {
-            if (_repositories==null)
+            if (_repositories == null)
             {
                 _repositories = new ConcurrentDictionary<string, object>();
             }

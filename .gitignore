@@ -348,3 +348,6 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+/UploadMyData/wwwroot/upload/手卫生.pdf
+/UploadMyData/wwwroot/upload/企业应用架构模式.pdf
+/UploadMyData/wwwroot/upload/2020第一季度 多重耐药菌监测反馈分析.pdf

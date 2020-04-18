@@ -1,5 +1,3 @@
-using System;
-
 namespace UploadMyData.Models
 {
     public class ErrorViewModel

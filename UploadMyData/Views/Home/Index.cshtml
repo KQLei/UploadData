@@ -1,8 +1,11 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "主页";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
+    <h1 class="display-4">欢迎来到大黄瓜书屋</h1>
+    <h2>书屋目前已有</h2>
+    <h1><a asp-controller="Book" asp-action="Index">@ViewBag.BookCount</a></h1>
+    <h2>本技术书籍</h2>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>

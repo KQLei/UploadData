@@ -1,7 +1,9 @@
-﻿using EF.Data;
+﻿using EF.Core.Data;
+using EF.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
+using System.Linq;
 using UploadMyData.Models;
 
 namespace UploadMyData.Controllers
@@ -20,6 +22,7 @@ namespace UploadMyData.Controllers
 
         public IActionResult Index()
         {
+            ViewBag.BookCount = _unitOfWork.Repository<Book>().Table.Count();
             return View();
         }
 

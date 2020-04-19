@@ -1,6 +1,7 @@
 using EF.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +22,9 @@ namespace UploadMyData
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            //请求体正文最大长度200M
+            services.Configure<FormOptions>(options => options.MultipartBodyLengthLimit = 200 * 1024 * 1024);
 
             services.AddDbContext<EFDbContext>(option => option.UseSqlServer(Configuration.GetConnectionString("BookContext")), ServiceLifetime.Scoped);
 

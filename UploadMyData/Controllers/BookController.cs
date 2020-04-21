@@ -40,6 +40,7 @@ namespace UploadMyData.Controllers
                 CreateTime = p.CreateTime.ToString("yyyy-MM-dd HH:mm:ss"),
                 ModifiedTime = p.ModifiedTime,
                 Title = p.Title,
+                URL = p.URL,
                 DownloadNum = p.DownloadNum
             });
             return Json(bookList);
@@ -125,7 +126,7 @@ namespace UploadMyData.Controllers
             var bookRep = _unitOfWork.Repository<Book>();
             var bookObj = bookRep.GetById(bookId);
             bookObj.DownloadNum += 1;
-            if (string.IsNullOrWhiteSpace(bookObj.URL))
+            if (string.IsNullOrWhiteSpace(bookObj.URL) || !System.IO.File.Exists(bookObj.URL))
             {
                 return RedirectToAction("Index");
             }
@@ -136,6 +137,7 @@ namespace UploadMyData.Controllers
             var memi = provider.Mappings[Path.GetExtension(bookObj.URL)];
             _unitOfWork.Commit();
             return File(new FileStream(bookObj.URL, FileMode.Open, FileAccess.Read), memi, fileName);
+
         }
 
         private void HandleUploadFiles(IFormFileCollection files, long bookId)

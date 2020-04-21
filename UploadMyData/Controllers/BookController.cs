@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
@@ -16,13 +17,12 @@ namespace UploadMyData.Controllers
     {
         private readonly ILogger<BookController> _logger;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IWebHostEnvironment _webHostEnvironment;
-
-        public BookController(ILogger<BookController> logger, IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
+        private readonly IConfiguration _configuration;
+        public BookController(ILogger<BookController> logger, IUnitOfWork unitOfWork, IConfiguration configuration)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
-            _webHostEnvironment = webHostEnvironment;
+            _configuration = configuration;
         }
 
         public ActionResult Index()
@@ -40,7 +40,7 @@ namespace UploadMyData.Controllers
                 CreateTime = p.CreateTime.ToString("yyyy-MM-dd HH:mm:ss"),
                 ModifiedTime = p.ModifiedTime,
                 Title = p.Title,
-                URL = p.URL
+                DownloadNum = p.DownloadNum
             });
             return Json(bookList);
         }
@@ -140,7 +140,7 @@ namespace UploadMyData.Controllers
 
         private void HandleUploadFiles(IFormFileCollection files, long bookId)
         {
-            string webRootPath = _webHostEnvironment.WebRootPath;
+            string webRootPath = _configuration.GetSection("BookUploadFile").Value;
             //数据总长度
             long size = files.Sum(f => f.Length);
             foreach (var file in files)

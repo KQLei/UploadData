@@ -17,5 +17,7 @@ namespace EF.Core.Data
 
         public string URL { get; set; }
 
+        public int DownloadNum { get; set; }
+
     }
 }

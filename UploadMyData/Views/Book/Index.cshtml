@@ -8,14 +8,16 @@
 
 <h2>书籍列表</h2>
 <button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#addBookModal" style="margin-bottom:10px;">添加书籍</button>
-<div>
+<div class="col-lg-12">
     <table class="table table-hover">
         <thead>
             <tr>
                 <th>#</th>
                 <th>书名</th>
                 <th>作者</th>
+                <th>下载次数</th>
                 <th>下载</th>
+                <th>上传时间</th>
                 <th>操作</th>
             </tr>
         </thead>
@@ -130,9 +132,11 @@
                         '<th scope="row">' + (index + 1) + '</th>' +
                         '<td>' + item.title + '</td>' +
                         '<td>' + item.auther + '</td>' +
+                        '<td>' + item.downloadNum + '</td>' +
                         '<td>' +
                         (item.url == null ? '暂无资源' : downStr) +
                         '</td>' +
+                        '<td>' + item.createTime + '</td>' +
                         '<td>' +
                         '<button type="button" class="btn btn-primary" onclick="showUploadModal(' + item.id + ')">上传</button>&nbsp&nbsp' +
                         '<button type="button" class="btn btn-danger" onclick="DeleteBook(' + item.id + ')">删除</button>' +
@@ -180,7 +184,7 @@
                 allowedFileExtensions: ['pdf'],
                 browseClass: 'btn btn-primary'
             });
-            $('#testfile').fileinput('refresh', { uploadUrl: "Book/Upload?bookId=" + id});
+            $('#testfile').fileinput('refresh', { uploadUrl: "Book/Upload?bookId=" + id });
 
             $("#uploadBookModal").modal('show')
 

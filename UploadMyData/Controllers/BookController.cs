@@ -37,7 +37,7 @@ namespace UploadMyData.Controllers
             {
                 ID = p.ID,
                 Auther = p.Auther,
-                CreateTime = p.CreateTime,
+                CreateTime = p.CreateTime.ToString("yyyy-MM-dd HH:mm:ss"),
                 ModifiedTime = p.ModifiedTime,
                 Title = p.Title,
                 URL = p.URL
@@ -124,7 +124,7 @@ namespace UploadMyData.Controllers
         {
             var bookRep = _unitOfWork.Repository<Book>();
             var bookObj = bookRep.GetById(bookId);
-
+            bookObj.DownloadNum += 1;
             if (string.IsNullOrWhiteSpace(bookObj.URL))
             {
                 return RedirectToAction("Index");
@@ -134,7 +134,7 @@ namespace UploadMyData.Controllers
             //获取文件的ContentType
             var provider = new FileExtensionContentTypeProvider();
             var memi = provider.Mappings[Path.GetExtension(bookObj.URL)];
-
+            _unitOfWork.Commit();
             return File(new FileStream(bookObj.URL, FileMode.Open, FileAccess.Read), memi, fileName);
         }
 

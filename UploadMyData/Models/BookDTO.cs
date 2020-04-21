@@ -15,7 +15,9 @@ namespace UploadMyData.Models
 
         public string URL { get; set; }
 
-        public DateTime CreateTime { get; set; }
+        public int DownloadNum { get; set; }
+
+        public string CreateTime { get; set; }
 
         public DateTime ModifiedTime { get; set; }
     }

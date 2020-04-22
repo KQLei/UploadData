@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EF.Core.Data;
+using System;
 
 namespace UploadMyData.Models
 {
@@ -18,6 +19,8 @@ namespace UploadMyData.Models
         public int DownloadNum { get; set; }
 
         public string CreateTime { get; set; }
+
+        public BookType BookType { get; set; }
 
         public DateTime ModifiedTime { get; set; }
     }

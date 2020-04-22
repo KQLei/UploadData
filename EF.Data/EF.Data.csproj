@@ -5,9 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Configuration\" />
-    <Folder Include="Conventions\" />
-    <Folder Include="Mapping\" />
+    <Compile Remove="Configuration\**" />
+    <Compile Remove="Conventions\**" />
+    <Compile Remove="Mapping\**" />
+    <EmbeddedResource Remove="Configuration\**" />
+    <EmbeddedResource Remove="Conventions\**" />
+    <EmbeddedResource Remove="Mapping\**" />
+    <None Remove="Configuration\**" />
+    <None Remove="Conventions\**" />
+    <None Remove="Mapping\**" />
   </ItemGroup>
 
   <ItemGroup>

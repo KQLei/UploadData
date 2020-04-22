@@ -19,5 +19,14 @@ namespace EF.Core.Data
 
         public int DownloadNum { get; set; }
 
+        public BookType BookType { get; set; }
+
+    }
+
+    public enum BookType
+    {
+        计算机技术,
+        文学,
+        其他
     }
 }

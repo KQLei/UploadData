@@ -1,4 +1,5 @@
 ﻿using EF.Core.Data;
+using EF.Core.Helper;
 using EF.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -27,6 +28,7 @@ namespace UploadMyData.Controllers
 
         public ActionResult Index()
         {
+            ViewBag.BookType = EnumHelper.GetEnumOptions<BookType>();
             return View();
         }
 
@@ -57,6 +59,7 @@ namespace UploadMyData.Controllers
                 {
                     Auther = bookDTO.Auther,
                     Title = bookDTO.Title,
+                    BookType = bookDTO.BookType
                 });
                 _unitOfWork.Commit();
                 return Json(new ResultModel
@@ -125,24 +128,26 @@ namespace UploadMyData.Controllers
         {
             var bookRep = _unitOfWork.Repository<Book>();
             var bookObj = bookRep.GetById(bookId);
-            bookObj.DownloadNum += 1;
-            if (string.IsNullOrWhiteSpace(bookObj.URL) || !System.IO.File.Exists(bookObj.URL))
+            //文件路径
+            string path = Path.Combine(_configuration.GetSection("BookUploadFile").Value, bookObj.URL);
+            if (string.IsNullOrWhiteSpace(bookObj.URL) || !System.IO.File.Exists(path))
             {
                 return RedirectToAction("Index");
             }
-
-            var fileName = Path.GetFileName(bookObj.URL);
             //获取文件的ContentType
             var provider = new FileExtensionContentTypeProvider();
             var memi = provider.Mappings[Path.GetExtension(bookObj.URL)];
+            var result = File(new FileStream(path, FileMode.Open, FileAccess.Read), memi, bookObj.URL);
+            //提交数据库
+            bookObj.DownloadNum += 1;
             _unitOfWork.Commit();
-            return File(new FileStream(bookObj.URL, FileMode.Open, FileAccess.Read), memi, fileName);
-
+            return result;
         }
 
         private void HandleUploadFiles(IFormFileCollection files, long bookId)
         {
-            string webRootPath = _configuration.GetSection("BookUploadFile").Value;
+            //文件夹地址
+            string filePath = _configuration.GetSection("BookUploadFile").Value;
             //数据总长度
             long size = files.Sum(f => f.Length);
             foreach (var file in files)
@@ -152,9 +157,6 @@ namespace UploadMyData.Controllers
                     //大小 字节
                     long fileSize = file.Length;
 
-                    //文件地址
-                    string filePath = Path.Combine(webRootPath, "upload");
-
                     //文件名
                     string fileName = Path.GetFileName(file.FileName);
 
@@ -162,16 +164,17 @@ namespace UploadMyData.Controllers
                     {
                         Directory.CreateDirectory(filePath);
                     }
+                    //文件路径
                     string path = Path.Combine(filePath, fileName);
 
                     using (var stream = new FileStream(path, FileMode.Create))
                     {
                         file.CopyTo(stream);
-                        var bookRep = _unitOfWork.Repository<Book>();
-                        var bookObj = bookRep.GetById(bookId);
-                        bookObj.URL = path;
-                        _unitOfWork.Commit();
                     }
+                    var bookRep = _unitOfWork.Repository<Book>();
+                    var bookObj = bookRep.GetById(bookId);
+                    bookObj.URL = fileName;
+                    _unitOfWork.Commit();
                 }
             }
         }

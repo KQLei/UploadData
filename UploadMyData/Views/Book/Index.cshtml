@@ -53,8 +53,17 @@
                         <label for="recipient-name" class="col-form-label">作者:</label>
                         <input type="text" class="form-control" id="book-author" name="bookAuthor">
                     </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">类型:</label>
+                        <select class="form-control" id="book-type" name="bookType">
+                            <option value="-1">请选择</option>
+                            @foreach (var item in ViewBag.BookType)
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        </select>
+                    </div>
                     <div class="alert alert-danger" role="alert" id="errorTip" style="display:none;">
-
                     </div>
                 </form>
             </div>
@@ -136,10 +145,18 @@
         }
 
         function AddBook() {
+            var BookType = $("#book-type").val();
+            if (BookType == -1) {
+                $("#errorTip").html("请选择书籍类型！");
+                $("#errorTip").css("display", "block");
+                return;
+            }
+
             $.post("Book/Create",
                 {
                     Title: $("#book-title").val(),
                     Auther: $("#book-author").val(),
+                    BookType: $("#book-type").val()
                 },
                 function (result) {
                     if (result.isSuccess) {
@@ -154,8 +171,7 @@
         }
 
         function Download(id) {
-
-            window.location.href = "Book/Download?bookId=" + id;
+            window.open("Book/Download?bookId=" + id);
             GetBookList();
         }
 

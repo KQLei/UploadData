@@ -26,16 +26,24 @@ namespace UploadMyData.Controllers
             _configuration = configuration;
         }
 
-        public ActionResult Index()
+        public ActionResult Index(BookType? bType = null)
         {
             ViewBag.BookType = EnumHelper.GetEnumOptions<BookType>();
+            if (bType.HasValue)
+            {
+                ViewBag.BookTypeValue = (int)bType;
+            }
+            else
+            {
+                ViewBag.BookTypeValue = null;
+            }
             return View();
         }
 
-        public ActionResult BookLists()
+        public ActionResult BookLists(BookType? bType = null)
         {
             var bookRep = _unitOfWork.Repository<Book>();
-            var bookList = bookRep.Table.Select(p => new BookDTO()
+            var bookList = bookRep.Table.Where(p => bType.HasValue ? p.BookType == bType : true).Select(p => new BookDTO()
             {
                 ID = p.ID,
                 Auther = p.Auther,
@@ -79,10 +87,14 @@ namespace UploadMyData.Controllers
         }
 
         [HttpPost]
-        public ActionResult Delete(long bookId)
+        public ActionResult Delete(long bookId,string dCode)
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(dCode)||dCode!=_configuration.GetValue<string>("DeleteCode"))
+                {
+                    throw new Exception("删除码错误");
+                }
                 var bookRep = _unitOfWork.Repository<Book>();
                 bookRep.Delete(bookRep.GetById(bookId));
                 _unitOfWork.Commit();
@@ -91,6 +103,7 @@ namespace UploadMyData.Controllers
                     IsSuccess = true,
                     Message = "删除成功"
                 });
+
             }
             catch (Exception ex)
             {

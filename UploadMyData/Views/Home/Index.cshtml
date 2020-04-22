@@ -2,10 +2,44 @@
     ViewData["Title"] = "主页";
 }
 
+
 <div class="text-center">
     <h1 class="display-4">欢迎来到大黄瓜书屋</h1>
     <h2>书屋目前已有</h2>
     <h1><a asp-controller="Book" asp-action="Index">@ViewBag.BookCount</a></h1>
-    <h2>本技术书籍</h2>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h2>本书籍</h2>
+    <div class="row justify-content-md-center" style="margin-top:20px">
+        <div class="col-lg-11 card-deck">
+            <div class="card">
+                <a href="/Book/Index?bType=0">
+                    <img src="~/img/soft.svg" class="card-img-top" alt="技术">
+                    <div class="card-body">
+                        <h4 class="card-title" style="color:black">@ViewBag.Soft.BType</h4>
+                        <p class="card-text">班可以不上，觉可以不睡，但码不能一日不撸</p>
+                        <p class="card-text"><small class="text-muted">目前已有 @ViewBag.Soft.BCount 本</small></p>
+                    </div>
+                </a>
+            </div>
+            <div class="card">
+                <a href="/Book/Index?bType=1">
+                    <img src="~/img/Literature.jpeg" class="card-img-top" alt="文学">
+                    <div class="card-body">
+                        <h4 class="card-title" style="color:black">@ViewBag.Literature.BType</h4>
+                        <p class="card-text">生命诚可贵，爱情价更高，若为自由故，二者皆可抛</p>
+                        <p class="card-text"><small class="text-muted">目前已有 @ViewBag.Literature.BCount 本</small></p>
+                    </div>
+                </a>
+            </div>
+            <div class="card">
+                <a href="/Book/Index?bType=2">
+                    <img src="~/img/other.gif" class="card-img-top" alt="其他" style="height:500px;">
+                    <div class="card-body">
+                        <h4 class="card-title" style="color:black">@ViewBag.Other.BType</h4>
+                        <p class="card-text">小撸怡情，大撸伤生，强撸灰飞烟灭</p>
+                        <p class="card-text"><small class="text-muted">目前已有 @ViewBag.Other.BCount 本</small></p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
 </div>

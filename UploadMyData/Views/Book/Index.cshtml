@@ -11,10 +11,7 @@
     </div>
 </div>
 <div class="row justify-content-md-center">
-
     <div class="col-lg-11 ">
-
-
         <table class="table table-hover">
             <thead class="thead-dark">
                 <tr>
@@ -94,12 +91,34 @@
     </div>
 </div>
 
+@*删除书籍*@
+<div class="modal fade" id="deleteBookModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">删除码:</label>
+                        <input type="text" class="form-control" id="book-deleteCode" name="deleteCode">
+                    </div>
+                    <div class="alert alert-danger" role="alert" id="deleterErrorTip" style="display:none;">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="CheckDeleteBook()">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 @section Scripts{
     <script>
+        var bId = 0;
         $(function () {
-            GetBookList();
+            GetBookList(@ViewBag.BookTypeValue);
             $('#addBookModal').on('show.bs.modal', function (event) {
                 var modal = $(this);
                 modal.find('.modal-body input').val("");
@@ -109,12 +128,12 @@
                 alert("上传成功");
                 $('#testfile').fileinput('clear');
                 $("#uploadBookModal").modal("hide");
-                GetBookList();
+                GetBookList(@ViewBag.BookTypeValue);
             });
         });
 
-        function GetBookList() {
-            $.getJSON("Book/BookLists", function (result) {
+        function GetBookList(bType) {
+            $.getJSON("BookLists?bType=" + bType, function (result) {
                 $("#bookTable").html("");
                 result.forEach(function (item, index) {
                     var downStr = '<button type="button" class="btn btn-default" onclick="Download(' + item.id + ')">' +
@@ -152,7 +171,7 @@
                 return;
             }
 
-            $.post("Book/Create",
+            $.post("Create",
                 {
                     Title: $("#book-title").val(),
                     Auther: $("#book-author").val(),
@@ -161,7 +180,7 @@
                 function (result) {
                     if (result.isSuccess) {
                         alert(result.message);
-                        GetBookList();
+                        GetBookList(@ViewBag.BookTypeValue);
                         $('#addBookModal').modal('hide');
                     } else {
                         $("#errorTip").html(result.message);
@@ -171,14 +190,14 @@
         }
 
         function Download(id) {
-            window.open("Book/Download?bookId=" + id);
-            GetBookList();
+            window.open("Download?bookId=" + id);
+            GetBookList(@ViewBag.BookTypeValue);
         }
 
         function ShowUploadModal(id) {
             $('#testfile').fileinput({
                 language: 'zh',
-                uploadUrl: "Book/Upload?bookId=" + id,
+                uploadUrl: "Upload?bookId=" + id,
                 showCaption: true,
                 showUpload: true,
                 showRemove: true,
@@ -196,16 +215,32 @@
         }
 
         function DeleteBook(id) {
-            $.post("Book/Delete",
-                {
-                    bookId: id
-                },
-                function (result) {
-                    alert(result.message);
-                    if (result.isSuccess) {
-                        GetBookList();
-                    }
-                })
+            $("#deleteBookModal").modal("show");
+            $("#deleterErrorTip").html("");
+            $("#deleterErrorTip").css("display", "none");
+            bId = id;
+        }
+
+        function CheckDeleteBook() {
+            var deleteCode = $("#book-deleteCode").val();
+            if (deleteCode == null || deleteCode == '') {
+                $("#deleterErrorTip").html("请填写删除码！");
+                $("#deleterErrorTip").css("display", "block");
+                return;
+            }
+           $.post("Delete",
+                    {
+                        bookId: bId,
+                        dCode: $("#book-deleteCode").val()
+                    },
+                    function (result) {
+                        alert(result.message);
+                        if (result.isSuccess) {
+                            GetBookList(@ViewBag.BookTypeValue);
+                        }
+               });
+            $("#book-deleteCode").val('');
+            $("#deleteBookModal").modal("hide");
         }
     </script>
 }

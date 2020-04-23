@@ -46,10 +46,10 @@ namespace UploadMyData.Controllers
             var bookList = bookRep.Table.Where(p => bType.HasValue ? p.BookType == bType : true).Select(p => new BookDTO()
             {
                 ID = p.ID,
-                Auther = p.Auther,
+                Auther = p.Auther??"-",
                 CreateTime = p.CreateTime.ToString("yyyy-MM-dd HH:mm:ss"),
                 ModifiedTime = p.ModifiedTime,
-                Title = p.Title,
+                Title = p.Title ?? "-",
                 URL = p.URL,
                 DownloadNum = p.DownloadNum
             });

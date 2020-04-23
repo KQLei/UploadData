@@ -11,5 +11,7 @@ namespace EF.Data
         }
 
         public DbSet<Book> Books { get; set; }
+
+        public DbSet<URLCollection> URLCollections { get; set; }
     }
 }

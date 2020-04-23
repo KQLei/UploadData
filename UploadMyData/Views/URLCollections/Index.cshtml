@@ -1,0 +1,168 @@
+﻿@{
+    ViewData["Title"] = "网址收藏";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="row justify-content-md-center">
+    <div class="col-lg-11 ">
+        <button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#AddURLModal" style="margin-bottom:10px;">添加网址</button>
+    </div>
+</div>
+<div class="row justify-content-md-center">
+    <div class="col-lg-11 ">
+        <table class="table table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th>#</th>
+                    <th>网址</th>
+                    <th>描述</th>
+                    <th>打开次数</th>
+                    <th>添加时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="urlTable">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@* 添加网址 *@
+<div class="modal fade" id="AddURLModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">添加新网址</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">网址:</label>
+                        <input type="text" class="form-control" id="book-title" name="bookTitle">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">描述:</label>
+                        <input type="text" class="form-control" id="book-author" name="bookAuthor">
+                    </div>
+                    <div class="alert alert-danger" role="alert" id="errorTip" style="display:none;">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="AddURL()">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@*删除网址*@
+<div class="modal fade" id="DeleteURLModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">删除码:</label>
+                        <input type="text" class="form-control" id="book-deleteCode" name="deleteCode">
+                    </div>
+                    <div class="alert alert-danger" role="alert" id="deleterErrorTip" style="display:none;">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="CheckDeleteURL()">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+        $(function () {
+            GetURLList();
+            $('#AddURLModal').on('show.bs.modal', function (event) {
+                var modal = $(this);
+                modal.find('.modal-body input').val("");
+            });
+        });
+
+        function GetURLList() {
+            $.getJSON("URLLists", function (result) {
+                $("#urlTable").html("");
+                result.forEach(function (item, index) {
+                    $("#urlTable").append(
+                        '<tr>' +
+                        '<th scope="row">' + (index + 1) + '</th>' +
+                        '<td><a href="' + item.url +'" target="_blank">'+item.url+'</a></td>' +
+                        '<td>' + item.description + '</td>' +
+                        '<td>' + item.openCount + '</td>' +
+                        '<td>' + item.createTime + '</td>' +
+                        '<td>' +
+                        '<button type="button" class="btn btn-danger" onclick="DeleteURL(' + item.id + ')">删除</button>&nbsp&nbsp' +
+                        '</td>' +
+                        '</tr>');
+                });
+
+            });
+        }
+
+        function AddURL() {
+            $.post("Create",
+                {
+                    URL: $("#book-title").val(),
+                    Description: $("#book-author").val(),
+                },
+                function (result) {
+                    if (result.isSuccess) {
+                        alert(result.message);
+                        GetURLList();
+                        $('#AddURLModal').modal('hide');
+                    } else {
+                        $("#errorTip").html(result.message);
+                        $("#errorTip").css("display", "block");
+                    }
+                })
+        }
+
+        function DeleteURL(id) {
+            $("#DeleteURLModal").modal("show");
+            $("#deleterErrorTip").html("");
+            $("#deleterErrorTip").css("display", "none");
+            bId = id;
+        }
+
+        function CheckDeleteURL() {
+            var deleteCode = $("#book-deleteCode").val();
+            if (deleteCode == null || deleteCode == '') {
+                $("#deleterErrorTip").html("请填写删除码！");
+                $("#deleterErrorTip").css("display", "block");
+                return;
+            }
+           $.post("Delete",
+                    {
+                        id: bId,
+                        dCode: $("#book-deleteCode").val()
+                    },
+                    function (result) {
+                        alert(result.message);
+                        if (result.isSuccess) {
+                            GetURLList();
+                        }
+               });
+            $("#book-deleteCode").val('');
+            $("#DeleteURLModal").modal("hide");
+        }
+
+
+    </script>
+}
+

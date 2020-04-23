@@ -168,8 +168,8 @@ namespace UploadMyData.Controllers
                 return Json(new ResultModel
                 {
                     IsSuccess = true,
-                    Message = path
-                });
+                    Message = Path.Combine("BookFile", bookObj.URL)
+                }); 
             }
             return Json(new ResultModel
             {

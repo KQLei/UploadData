@@ -246,10 +246,10 @@
 
         function ReadBook(id) {
             $.getJSON("BookFilePath?bookId=" + id, function (data) {
-                if (data.IsSuccess) {
-                     window.open("~/lib/pdfjs-2.4.456-dist/web/viewer.html?file=" + data.Message);
+                if (data.isSuccess) {
+                    window.open(data.message);
                 } else {
-                    alert(data.Message);
+                    alert(data.message);
                     return;
                 }
 

@@ -145,7 +145,7 @@ namespace UploadMyData.Controllers
             string path = Path.Combine(_configuration.GetSection("BookUploadFile").Value, bookObj.URL);
             if (string.IsNullOrWhiteSpace(bookObj.URL) || !System.IO.File.Exists(path))
             {
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "Book");
             }
             //获取文件的ContentType
             var provider = new FileExtensionContentTypeProvider();

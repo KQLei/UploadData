@@ -6,7 +6,7 @@
 <div class="text-center">
     <h1 class="display-4">欢迎来到大黄瓜书屋</h1>
     <h2>书屋目前已有</h2>
-    <h1><a asp-controller="Book" asp-action="Index">@ViewBag.BookCount</a></h1>
+    <h1><a href="/Book/Index">@ViewBag.BookCount</a></h1>
     <h2>本书籍</h2>
     <div class="row justify-content-md-center" style="margin-top:20px">
         <div class="col-lg-11 card-deck">
@@ -32,7 +32,7 @@
             </div>
             <div class="card">
                 <a href="/Book/Index?bType=2">
-                    <img src="~/img/other.gif" class="card-img-top" alt="其他" style="height:500px;">
+                    <img src="~/img/other.jpg" class="card-img-top" alt="其他" style="height:400px;">
                     <div class="card-body">
                         <h4 class="card-title" style="color:black">@ViewBag.Other.BType</h4>
                         <p class="card-text">小撸怡情，大撸伤生，强撸灰飞烟灭</p>

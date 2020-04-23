@@ -209,7 +209,7 @@
                 allowedFileExtensions: ['pdf'],
                 browseClass: 'btn btn-primary'
             });
-            $('#testfile').fileinput('refresh', { uploadUrl: "Book/Upload?bookId=" + id });
+            $('#testfile').fileinput('refresh', { uploadUrl: "Upload?bookId=" + id });
 
             $("#uploadBookModal").modal('show')
 

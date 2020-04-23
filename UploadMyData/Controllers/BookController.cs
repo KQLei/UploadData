@@ -87,11 +87,11 @@ namespace UploadMyData.Controllers
         }
 
         [HttpPost]
-        public ActionResult Delete(long bookId,string dCode)
+        public ActionResult Delete(long bookId, string dCode)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(dCode)||dCode!=_configuration.GetValue<string>("DeleteCode"))
+                if (string.IsNullOrWhiteSpace(dCode) || dCode != _configuration.GetValue<string>("DeleteCode"))
                 {
                     throw new Exception("删除码错误");
                 }
@@ -155,6 +155,27 @@ namespace UploadMyData.Controllers
             bookObj.DownloadNum += 1;
             _unitOfWork.Commit();
             return result;
+        }
+
+        public ActionResult BookFilePath(long bookId)
+        {
+            var bookRep = _unitOfWork.Repository<Book>();
+            var bookObj = bookRep.GetById(bookId);
+            //文件路径
+            string path = Path.Combine(_configuration.GetSection("BookUploadFile").Value, bookObj.URL);
+            if (System.IO.File.Exists(path))
+            {
+                return Json(new ResultModel
+                {
+                    IsSuccess = true,
+                    Message = path
+                });
+            }
+            return Json(new ResultModel
+            {
+                IsSuccess = false,
+                Message = "当前书籍不存在"
+            });
         }
 
         private void HandleUploadFiles(IFormFileCollection files, long bookId)

@@ -155,7 +155,8 @@
                         '<td>' + item.createTime + '</td>' +
                         '<td>' +
                         '<button type="button" class="btn btn-primary" onclick="ShowUploadModal(' + item.id + ')">上传</button>&nbsp&nbsp' +
-                        '<button type="button" class="btn btn-danger" onclick="DeleteBook(' + item.id + ')">删除</button>' +
+                        '<button type="button" class="btn btn-info" onclick="ReadBook(' + item.id + ')">在线阅读</button>&nbsp&nbsp' +
+                        '<button type="button" class="btn btn-danger" onclick="DeleteBook(' + item.id + ')">删除</button>&nbsp&nbsp' +
                         '</td>' +
                         '</tr>');
                 });
@@ -241,6 +242,19 @@
                });
             $("#book-deleteCode").val('');
             $("#deleteBookModal").modal("hide");
+        }
+
+        function ReadBook(id) {
+            $.getJSON("BookFilePath?bookId=" + id, function (data) {
+                if (data.IsSuccess) {
+                     window.open("~/lib/pdfjs-2.4.456-dist/web/viewer.html?file=" + data.Message);
+                } else {
+                    alert(data.Message);
+                    return;
+                }
+
+
+            });
         }
     </script>
 }

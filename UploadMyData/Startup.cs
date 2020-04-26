@@ -1,3 +1,4 @@
+using EF.Core.Helper;
 using EF.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -27,7 +28,7 @@ namespace UploadMyData
             //请求体正文最大长度200M
             services.Configure<FormOptions>(options => options.MultipartBodyLengthLimit = 200 * 1024 * 1024);
 
-            services.AddDbContext<EFDbContext>(option => option.UseSqlServer(Configuration.GetConnectionString("BookContext")), ServiceLifetime.Scoped);
+            services.AddDbContext<EFDbContext>(option => option.UseSqlServer(AESHelper.AesDecrypt(Configuration.GetConnectionString("BookContext"))), ServiceLifetime.Scoped);
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
         }

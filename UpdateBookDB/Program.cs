@@ -1,4 +1,5 @@
 ﻿using EF.Core.Data;
+using EF.Core.Helper;
 using EF.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -11,7 +12,7 @@ namespace UpdateBookDB
         static void Main(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<EFDbContext>();
-            optionsBuilder.UseSqlServer("Server=49.233.170.29;Database=BookDB;User ID=sa;Password=123qwe!@#");
+            optionsBuilder.UseSqlServer(AESHelper.AesDecrypt("RFwcA+m9Dcqj1DQpyMqtjojDfZIz02/DUAI2GCFF6ooXb8XQawj/7QCQK/fafOQ5zaiMa0gDPPE9FUwrsjD/DU5hW6eG64sAmfSfROf9wrs"));
 
 
             using (EFDbContext context = new EFDbContext(optionsBuilder.Options))

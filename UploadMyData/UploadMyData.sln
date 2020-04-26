@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29905.134
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UploadMyData", "UploadMyData.csproj", "{F5AA1409-B675-4766-88D1-CE97384BAD03}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UploadMyData", "UploadMyData.csproj", "{F5AA1409-B675-4766-88D1-CE97384BAD03}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EF.Core", "..\EF.Core\EF.Core.csproj", "{1E281A89-3ED1-400C-B0B2-7988DE1271A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EF.Core", "..\EF.Core\EF.Core.csproj", "{1E281A89-3ED1-400C-B0B2-7988DE1271A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EF.Data", "..\EF.Data\EF.Data.csproj", "{B2350EB5-87E9-43DA-97E5-52AB960732B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EF.Data", "..\EF.Data\EF.Data.csproj", "{B2350EB5-87E9-43DA-97E5-52AB960732B3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpdateBookDB", "..\UpdateBookDB\UpdateBookDB.csproj", "{FE6D7092-7263-445D-A699-F3847DF5DD58}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{B2350EB5-87E9-43DA-97E5-52AB960732B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B2350EB5-87E9-43DA-97E5-52AB960732B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B2350EB5-87E9-43DA-97E5-52AB960732B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE6D7092-7263-445D-A699-F3847DF5DD58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE6D7092-7263-445D-A699-F3847DF5DD58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE6D7092-7263-445D-A699-F3847DF5DD58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE6D7092-7263-445D-A699-F3847DF5DD58}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

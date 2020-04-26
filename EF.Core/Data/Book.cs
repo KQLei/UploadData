@@ -21,6 +21,12 @@ namespace EF.Core.Data
 
         public BookType BookType { get; set; }
 
+        /// <summary>
+        /// 字节
+        /// </summary>
+        public long FileSize { get; set; }
+             
+
     }
 
     public enum BookType

@@ -23,5 +23,7 @@ namespace UploadMyData.Models
         public BookType BookType { get; set; }
 
         public DateTime ModifiedTime { get; set; }
+
+        public string FileSize { get; set; }
     }
 }

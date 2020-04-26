@@ -18,6 +18,7 @@
                     <th>#</th>
                     <th>书名</th>
                     <th>作者</th>
+                    <th>文件大小</th>
                     <th>下载次数</th>
                     <th>上传</th>
                     <th>上传时间</th>
@@ -148,12 +149,13 @@
                         '<th scope="row">' + (index + 1) + '</th>' +
                         '<td>' + item.title + '</td>' +
                         '<td>' + item.auther + '</td>' +
+                        '<td>' + (item.fileSize / 1024 / 1024).toFixed(2) + 'M</td>' +
                         '<td>' + item.downloadNum + '</td>' +
                         '<td>' + uploadStr+ '</td>' +
                         '<td>' + item.createTime + '</td>' +
                         '<td>' +
                         (item.url == null ? '' : '<button type="button" class="btn btn-primary" onclick="Download(' + item.id + ')">下载</button>&nbsp&nbsp' ) +
-                        '<button type="button" class="btn btn-info" onclick="ReadBook(' + item.id + ')">在线阅读</button>&nbsp&nbsp' +
+                        (item.url == null ? '' :  '<button type="button" class="btn btn-info" onclick="ReadBook(' + item.id + ')">在线阅读</button>&nbsp&nbsp') +
                         '<button type="button" class="btn btn-danger" onclick="DeleteBook(' + item.id + ')">删除</button>&nbsp&nbsp' +
                         '</td>' +
                         '</tr>');

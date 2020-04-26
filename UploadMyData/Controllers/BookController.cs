@@ -46,13 +46,14 @@ namespace UploadMyData.Controllers
             var bookList = bookRep.Table.Where(p => bType.HasValue ? p.BookType == bType : true).Select(p => new BookDTO()
             {
                 ID = p.ID,
-                Auther = p.Auther??"-",
+                Auther = p.Auther ?? "-",
                 CreateTime = p.CreateTime.ToString("yyyy-MM-dd HH:mm:ss"),
                 ModifiedTime = p.ModifiedTime,
                 Title = p.Title ?? "-",
                 URL = p.URL,
-                DownloadNum = p.DownloadNum
-            });
+                DownloadNum = p.DownloadNum,
+                FileSize = p.FileSize.ToString()
+            }); 
             return Json(bookList);
         }
 
@@ -169,7 +170,7 @@ namespace UploadMyData.Controllers
                 {
                     IsSuccess = true,
                     Message = Path.Combine("BookFile", bookObj.URL)
-                }); 
+                });
             }
             return Json(new ResultModel
             {
@@ -182,15 +183,10 @@ namespace UploadMyData.Controllers
         {
             //文件夹地址
             string filePath = _configuration.GetSection("BookUploadFile").Value;
-            //数据总长度
-            long size = files.Sum(f => f.Length);
             foreach (var file in files)
             {
                 if (file.Length > 0)
                 {
-                    //大小 字节
-                    long fileSize = file.Length;
-
                     //文件名
                     string fileName = Path.GetFileName(file.FileName);
 
@@ -208,6 +204,7 @@ namespace UploadMyData.Controllers
                     var bookRep = _unitOfWork.Repository<Book>();
                     var bookObj = bookRep.GetById(bookId);
                     bookObj.URL = fileName;
+                    bookObj.FileSize = file.Length;
                     _unitOfWork.Commit();
                 }
             }

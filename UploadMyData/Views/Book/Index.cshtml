@@ -42,7 +42,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form>
+             
                     <div class="form-group">
                         <label for="recipient-name" class="col-form-label">书名:</label>
                         <input type="text" class="form-control" id="book-title" name="bookTitle">
@@ -61,9 +61,13 @@
                             }
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">书籍:</label>
+                        <input type="file" class="form-control" id="book-file" name="bookFile" />
+                    </div>
                     <div class="alert alert-danger" role="alert" id="errorTip" style="display:none;">
                     </div>
-                </form>
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
@@ -172,13 +176,21 @@
                 return;
             }
 
-            $.post("Create",
-                {
-                    Title: $("#book-title").val(),
-                    Auther: $("#book-author").val(),
-                    BookType: $("#book-type").val()
-                },
-                function (result) {
+            var formdata = new FormData();
+
+            formdata.append("Title", $("#book-title").val());
+            formdata.append("Auther", $("#book-author").val());
+            formdata.append("BookType", $("#book-type").val());
+            formdata.append("file", $("#book-file")[0].files[0]);
+
+            $.ajax({
+                type: "POST",
+                url: "Create",
+                data: formdata,
+                processData: false,
+                dataType: "json",
+                contentType: false,
+                success: function (result) {
                     if (result.isSuccess) {
                         alert(result.message);
                         GetBookList(@ViewBag.BookTypeValue);
@@ -187,7 +199,8 @@
                         $("#errorTip").html(result.message);
                         $("#errorTip").css("display", "block");
                     }
-                })
+                }
+            });           
         }
 
         function Download(id) {
@@ -252,8 +265,6 @@
                     alert(data.message);
                     return;
                 }
-
-
             });
         }
     </script>

@@ -53,24 +53,39 @@ namespace UploadMyData.Controllers
                 URL = p.URL,
                 DownloadNum = p.DownloadNum,
                 FileSize = p.FileSize.ToString()
-            }); 
+            });
             return Json(bookList);
         }
 
         [HttpPost]
-        public ActionResult Create(BookDTO bookDTO)
+        public ActionResult Create([FromForm] IFormCollection formData)
         {
             try
             {
+                if (formData.Files.Count <= 0)
+                {
+                    return Json(new ResultModel
+                    {
+                        IsSuccess = false,
+                        Message = "请选择要上传的书籍"
+                    });
+                }
+
                 var bookRep = _unitOfWork.Repository<Book>();
 
-                bookRep.Insert(new Book
+                var newBook = new Book
                 {
-                    Auther = bookDTO.Auther,
-                    Title = bookDTO.Title,
-                    BookType = bookDTO.BookType
-                });
+                    Auther = formData["Auther"].ToString(),
+                    Title = formData["Title"].ToString(),
+                    BookType = (BookType)int.Parse(formData["BookType"].ToString()),
+                };
+
+                HandleUploadFiles(formData.Files, newBook);
+
+                bookRep.Insert(newBook);
+
                 _unitOfWork.Commit();
+
                 return Json(new ResultModel
                 {
                     IsSuccess = true,
@@ -128,8 +143,12 @@ namespace UploadMyData.Controllers
                     Message = "请选择要上传的书籍"
                 });
             }
+            var bookRep = _unitOfWork.Repository<Book>();
 
-            HandleUploadFiles(Request.Form.Files, bookId);
+
+            HandleUploadFiles(Request.Form.Files, bookRep.GetById(bookId));
+
+            _unitOfWork.Commit();
 
             return Json(new ResultModel
             {
@@ -179,7 +198,7 @@ namespace UploadMyData.Controllers
             });
         }
 
-        private void HandleUploadFiles(IFormFileCollection files, long bookId)
+        private void HandleUploadFiles(IFormFileCollection files, Book bookObj)
         {
             //文件夹地址
             string filePath = _configuration.GetSection("BookUploadFile").Value;
@@ -200,12 +219,10 @@ namespace UploadMyData.Controllers
                     using (var stream = new FileStream(path, FileMode.Create))
                     {
                         file.CopyTo(stream);
-                    }
-                    var bookRep = _unitOfWork.Repository<Book>();
-                    var bookObj = bookRep.GetById(bookId);
+                    }                 
+
                     bookObj.URL = fileName;
                     bookObj.FileSize = file.Length;
-                    _unitOfWork.Commit();
                 }
             }
         }

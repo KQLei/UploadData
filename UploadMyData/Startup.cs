@@ -26,7 +26,14 @@ namespace UploadMyData
             services.AddControllersWithViews();
 
             //请求体正文最大长度200M
-            services.Configure<FormOptions>(options => options.MultipartBodyLengthLimit = 200 * 1024 * 1024);
+            services.Configure<FormOptions>(options =>
+            {
+                options.MultipartBodyLengthLimit = 200 * 1024 * 1024;
+                options.ValueCountLimit = 5000;
+                options.ValueLengthLimit = 200 * 1024 * 1024;
+                options.KeyLengthLimit = 200 * 1024 * 1024;
+                options.MultipartBodyLengthLimit = 200 * 1024 * 1024;
+            });
 
             services.AddDbContext<EFDbContext>(option => option.UseSqlServer(AESHelper.AesDecrypt(Configuration.GetConnectionString("BookContext"))), ServiceLifetime.Scoped);
 

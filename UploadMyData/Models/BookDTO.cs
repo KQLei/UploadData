@@ -1,4 +1,5 @@
 ﻿using EF.Core.Data;
+using Microsoft.AspNetCore.Http;
 using System;
 
 namespace UploadMyData.Models
@@ -25,5 +26,7 @@ namespace UploadMyData.Models
         public DateTime ModifiedTime { get; set; }
 
         public string FileSize { get; set; }
+
+        public FormFile BookFile { get; set; }
     }
 }

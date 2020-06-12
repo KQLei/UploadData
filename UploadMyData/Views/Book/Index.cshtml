@@ -42,31 +42,31 @@
                 </button>
             </div>
             <div class="modal-body">
-             
-                    <div class="form-group">
-                        <label for="recipient-name" class="col-form-label">书名:</label>
-                        <input type="text" class="form-control" id="book-title" name="bookTitle">
-                    </div>
-                    <div class="form-group">
-                        <label for="recipient-name" class="col-form-label">作者:</label>
-                        <input type="text" class="form-control" id="book-author" name="bookAuthor">
-                    </div>
-                    <div class="form-group">
-                        <label for="recipient-name" class="col-form-label">类型:</label>
-                        <select class="form-control" id="book-type" name="bookType">
-                            <option value="-1">请选择</option>
-                            @foreach (var item in ViewBag.BookType)
-                            {
-                                <option value="@item.Value">@item.Text</option>
-                            }
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="recipient-name" class="col-form-label">书籍:</label>
-                        <input type="file" class="form-control" id="book-file" name="bookFile" />
-                    </div>
-                    <div class="alert alert-danger" role="alert" id="errorTip" style="display:none;">
-                    </div>
+
+                <div class="form-group">
+                    <label for="recipient-name" class="col-form-label">书名:</label>
+                    <input type="text" class="form-control" id="book-title" name="bookTitle">
+                </div>
+                <div class="form-group">
+                    <label for="recipient-name" class="col-form-label">作者:</label>
+                    <input type="text" class="form-control" id="book-author" name="bookAuthor">
+                </div>
+                <div class="form-group">
+                    <label for="recipient-name" class="col-form-label">类型:</label>
+                    <select class="form-control" id="book-type" name="bookType">
+                        <option value="-1">请选择</option>
+                        @foreach (var item in ViewBag.BookType)
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="recipient-name" class="col-form-label">书籍:</label>
+                    <input type="file" class="form-control" id="book-file" name="bookFile" accept=".pdf" />
+                </div>
+                <div class="alert alert-danger" role="alert" id="errorTip" style="display:none;">
+                </div>
 
             </div>
             <div class="modal-footer">
@@ -114,6 +114,17 @@
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
                 <button type="button" class="btn btn-primary" onclick="CheckDeleteBook()">确定</button>
             </div>
+        </div>
+    </div>
+</div>
+
+
+@*静态背景模态*@
+<div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="loader">
+            <span class="text">Loading</span>
+            <span class="spinner"></span>
         </div>
     </div>
 </div>
@@ -169,8 +180,18 @@
         }
 
         function AddBook() {
-            var BookType = $("#book-type").val();
-            if (BookType == -1) {
+            var bookType = $("#book-type").val();
+            var bookTitle = $("#book-title").val();
+            var bookAuther = $("#book-author").val();
+
+
+            if (bookTitle == "" && bookAuther == "") {
+                $("#errorTip").html("请添加书籍名称和作者名称！");
+                $("#errorTip").css("display", "block");
+                return;
+            }
+
+            if (bookType == -1) {
                 $("#errorTip").html("请选择书籍类型！");
                 $("#errorTip").css("display", "block");
                 return;
@@ -178,11 +199,14 @@
 
             var formdata = new FormData();
 
-            formdata.append("Title", $("#book-title").val());
-            formdata.append("Auther", $("#book-author").val());
-            formdata.append("BookType", $("#book-type").val());
+            formdata.append("Title", bookTitle);
+            formdata.append("Auther", bookAuther );
+            formdata.append("BookType", bookType);
             formdata.append("file", $("#book-file")[0].files[0]);
 
+
+            $("#staticBackdrop").modal("show");
+            $('#addBookModal').modal('hide');
             $.ajax({
                 type: "POST",
                 url: "Create",
@@ -191,16 +215,20 @@
                 dataType: "json",
                 contentType: false,
                 success: function (result) {
+                    $("#staticBackdrop").modal("hide");                    
                     if (result.isSuccess) {
                         alert(result.message);
                         GetBookList(@ViewBag.BookTypeValue);
                         $('#addBookModal').modal('hide');
                     } else {
+                        $("#addBookModal").modal("show");
                         $("#errorTip").html(result.message);
                         $("#errorTip").css("display", "block");
                     }
                 }
-            });           
+            });
+
+
         }
 
         function Download(id) {

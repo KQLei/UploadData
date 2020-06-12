@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UploadMyData.Models;
@@ -146,7 +147,18 @@ namespace UploadMyData.Controllers
             var bookRep = _unitOfWork.Repository<Book>();
 
 
-            HandleUploadFiles(Request.Form.Files, bookRep.GetById(bookId));
+            try
+            {
+                HandleUploadFiles(Request.Form.Files, bookRep.GetById(bookId));
+            }
+            catch (Exception ex)
+            {
+                return Json(new ResultModel
+                {
+                    IsSuccess = false,
+                    Message = $"上传失败，原因为：{ex.Message}"
+                });
+            }
 
             _unitOfWork.Commit();
 
@@ -208,6 +220,17 @@ namespace UploadMyData.Controllers
                 {
                     //文件名
                     string fileName = Path.GetFileName(file.FileName);
+
+                    //文件扩展名
+                    string fileExtension = Path.GetExtension(file.FileName);
+
+                    var fileExtensionList = _configuration.GetSection("FileType").Get<List<string>>();
+
+                    if (!fileExtensionList.Contains(fileExtension))
+                    {
+                        throw new Exception("当前上传的文件类型不满足要求");
+                    }
+
 
                     if (!Directory.Exists(filePath))
                     {

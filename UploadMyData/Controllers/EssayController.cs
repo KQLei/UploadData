@@ -37,8 +37,8 @@ namespace UploadMyData.Controllers
             var essayList = _unitOfWork.Repository<Essay>().Table.Select(p => new EssayDTO
             {
                 Id = p.ID,
-                Title = p.Title,
-                Content = p.Content,
+                Title = p.Title.Substring(0, 10) + "······",
+                Content = p.Content.Substring(0, 20) + "······",
                 AddDateTime = p.CreateTime.ToString("yyyy-MM-dd HH:mm:ss")
             }); ;
 
@@ -46,7 +46,7 @@ namespace UploadMyData.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddEssay(EssayDTO essayDTO)
+        public IActionResult Create(EssayDTO essayDTO)
         {
             ResultModel resultModel = new ResultModel();
             try
@@ -94,6 +94,20 @@ namespace UploadMyData.Controllers
                 result.Message = $"删除失败，原因为：{ex.Message}";
             }
             return Json(result);
+        }
+
+        public IActionResult Detail(long essayId)
+        {
+            var essayObj = _unitOfWork.Repository<Essay>().GetById(essayId);
+            
+           return Json(new EssayDTO
+            {
+                Id = essayObj.ID,
+                Title = essayObj.Title,
+                Content = essayObj.Content,
+                AddDateTime = essayObj.CreateTime.ToString("yyyy-MM-dd HH:mm:ss")
+            }); ;
+
         }
 
     }
